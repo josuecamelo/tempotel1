@@ -17,7 +17,9 @@ class CreateProdutosTable extends Migration
             $table->id();
             $table->string('nome');
             $table->decimal('valor',15,2);
+            $table->char('ativo', 1)->default(1);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

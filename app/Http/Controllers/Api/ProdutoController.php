@@ -2,11 +2,21 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Models\Produto;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Api\BaseController as BaseController;
+use Validator;
+use App\Http\Resources\Produto as ProductResource;
 
 class ProdutoController extends BaseController
 {
+    private $produtoModel;
+
+    public function __construct(Produto $produtoModel)
+    {
+        $this->produtoModel = $produtoModel;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,19 +24,10 @@ class ProdutoController extends BaseController
      */
     public function index()
     {
-        //
-    }
+        $produtos = Produto::paginate();
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return $this->sendResponse($produtos, 'Produtos Obtivos com Sucesso.');
     }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -35,7 +36,9 @@ class ProdutoController extends BaseController
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+        $produto = Produto::create($input);
+        return $this->sendResponse($produto, 'Produto Criado com Sucesso.');
     }
 
     /**
@@ -46,18 +49,13 @@ class ProdutoController extends BaseController
      */
     public function show($id)
     {
-        //
-    }
+        $produto = Produto::find($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        if (is_null($produto)) {
+            return $this->sendError('Product not found.');
+        }
+
+        return $this->sendResponse($produto, 'Produto Obtivo com Sucesso.');
     }
 
     /**
@@ -67,9 +65,16 @@ class ProdutoController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Produto $produto)
     {
-        //
+        $input = $request->all();
+
+        $produto->nome = $input['nome'];
+        $produto->valor = $input['valor'];
+        $produto->ativo = $input['ativo'];
+        $produto->save();
+
+        return $this->sendResponse($produto, 'Produto Atualizado com Sucesso.');
     }
 
     /**
@@ -78,8 +83,10 @@ class ProdutoController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Produto $produto)
     {
-        //
+        $produto->delete();
+
+        return $this->sendResponse([], 'Produto Deletado com Sucesso.');
     }
 }

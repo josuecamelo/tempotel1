@@ -18,6 +18,7 @@ class CreatePedidosTable extends Migration
             $table->foreignId('cliente_id')->constrained('clientes');
             $table->decimal('valor_total',15,2);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
