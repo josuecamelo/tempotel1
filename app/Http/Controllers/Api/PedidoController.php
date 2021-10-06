@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cliente;
+use App\Models\Pedido;
+use App\Models\PedidoItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PedidoController extends BaseController
 {
@@ -14,17 +18,8 @@ class PedidoController extends BaseController
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $pedidos = Pedido::with(['cliente','pedidoItems', 'pedidoItems.produto'])->paginate();
+        return $this->sendResponse($pedidos, 'Pedidos Obtivos com Sucesso.');
     }
 
     /**
@@ -35,7 +30,24 @@ class PedidoController extends BaseController
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+
+        try {
+            $pedido = Pedido::create($input);
+
+            if($pedido){
+                foreach($input['items'] as $item){
+                    $item['pedido_id'] = $pedido->id;
+                    PedidoItem::create($item);
+                }
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->sendError( 'Houve uma Falha não catalogada ao tentar inserir o Pedido.');
+        }
+
+        return $this->sendResponse($pedido, 'Pedido Inserido com Sucesso.');
     }
 
     /**
