@@ -26,7 +26,7 @@ class ClienteController extends BaseController
     {
         $clientes = Cliente::paginate();
 
-        return $this->sendResponse($clientes, 'Produtos Obtivos com Sucesso.');
+        return $this->sendResponse($clientes, 'Clientes Obtivos com Sucesso.');
     }
     /**
      * Store a newly created resource in storage.
