@@ -20,8 +20,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('user/login',[LoginController::class, 'userLogin'])->name('userLogin');
-Route::group( ['prefix' => 'user','middleware' => ['auth:user-api','scopes:user'] ],function(){
-    // authenticated staff routes here
-    Route::get('dashboard',[LoginController::class, 'userDashboard']);
-});
+//Route::group( ['prefix' => 'user','middleware' => ['auth:user-api','scopes:user'] ],function(){
+//    // authenticated staff routes here
+//    Route::get('dashboard',[LoginController::class, 'userDashboard']);
+//});
+
+Route::resource('clientes', \App\Http\Controllers\Api\ClienteController::class);
+    //->middleware(['auth:user-api','scopes:user']);
+Route::resource('produtos', \App\Http\Controllers\Api\ProdutoController::class);
+    //->middleware(['auth:user-api','scopes:user']);
+Route::resource('pedidos', \App\Http\Controllers\Api\PedidoController::class);
+    //->middleware(['auth:user-api','scopes:user']);
 
