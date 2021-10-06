@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cliente extends Model
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -17,6 +17,13 @@ class Cliente extends Model
      * @var array
      */
     protected $fillable = [
-        'nome', 'email', 'password', 'data_nascimento', 'telefone', 'ativo'
+        'nome', 'data_nascimento', 'telefone', 'ativo'
     ];
+
+    public function getDataNascimentoAttribute($value){
+        return Carbon::createFromFormat('Y-m-d', $value)->format('d/m/Y');
+    }
+    public function setDataNascimentoAttribute($value){
+        $this->attributes['data_nascimento'] = \DateTime::createFromFormat('d/m/Y', $value)->format('Y-m-d');
+    }
 }
