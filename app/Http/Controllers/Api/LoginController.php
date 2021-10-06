@@ -10,7 +10,7 @@ use Hash;
 use Validator;
 use Auth;
 
-class LoginController extends Controller
+class LoginController extends BaseController
 {
     public function userDashboard()
     {
@@ -22,13 +22,6 @@ class LoginController extends Controller
 
     public function userLogin(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
 
-        if($validator->fails()){
-            return response()->json(['error' => $validator->errors()->all()]);
-        }
     }
 }
